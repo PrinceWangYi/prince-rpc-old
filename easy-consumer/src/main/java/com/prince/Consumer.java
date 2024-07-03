@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class Consumer {
     public static void main(String[] args) throws IOException {
+        System.out.println(RpcApplication.getDefaultConfig());
         UserService proxy = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
         user.setName("prince");

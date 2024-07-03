@@ -13,6 +13,7 @@
         <module name="easy-provider" />
         <module name="rpc-common" />
         <module name="rpc-easy" />
+        <module name="prince-rpc-core" />
         <module name="easy-consumer" />
       </profile>
     </annotationProcessing>

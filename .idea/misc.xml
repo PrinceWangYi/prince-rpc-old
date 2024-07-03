@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/easy-provider/pom.xml" />
         <option value="$PROJECT_DIR$/rpc-common/pom.xml" />
         <option value="$PROJECT_DIR$/rpc-easy/pom.xml" />
+        <option value="$PROJECT_DIR$/prince-rpc-core/pom.xml" />
       </list>
     </option>
   </component>
