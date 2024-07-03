@@ -3,32 +3,39 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.prince</groupId>
-  <artifactId>easy-consumer</artifactId>
+  <artifactId>rpc-core</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/io.vertx/vertx-core -->
     <dependency>
-      <groupId>com.prince</groupId>
-      <artifactId>rpc-common</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>4.5.1</version>
     </dependency>
+    <!-- https://doc.hutool.cn/ -->
     <dependency>
-      <groupId>com.prince</groupId>
-      <artifactId>rpc-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <!--<scope>compile</scope>-->
-    </dependency>
-    <!--<dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
-      <version>5.8.16</version>
+      <version>5.8.25</version>
     </dependency>
-    &lt;!&ndash; https://projectlombok.org/ &ndash;&gt;
+    <!-- https://projectlombok.org/ -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.30</version>
       <scope>provided</scope>
-    </dependency>-->
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.3.12</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>RELEASE</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

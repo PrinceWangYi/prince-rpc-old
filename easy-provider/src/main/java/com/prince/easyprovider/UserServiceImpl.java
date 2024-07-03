@@ -8,4 +8,9 @@ public class UserServiceImpl implements UserService {
         System.out.println(user.getName());
         return user;
     }
+
+    @Override
+    public int queryUsername(User user) {
+        return user.getName().length();
+    }
 }

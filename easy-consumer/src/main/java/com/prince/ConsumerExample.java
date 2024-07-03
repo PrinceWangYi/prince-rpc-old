@@ -10,12 +10,14 @@ import java.io.IOException;
 public class ConsumerExample {
 
     public static void main(String[] args) throws IOException {
-        UserServiceProxy userServiceProxy = new UserServiceProxy();
+        /*UserServiceProxy userServiceProxy = new UserServiceProxy();*/
         User user = new User();
         user.setName("prince");
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user1 = userService.getUser(user);
-        userServiceProxy.getUser(user);
+        int i = userService.queryUsername(user);
+        System.out.println(i);
+        /*userServiceProxy.getUser(user);*/
 
         System.out.println(JSONUtil.toJsonStr(user1));
 

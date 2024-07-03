@@ -31,4 +31,9 @@ public class UserServiceProxy implements UserService {
         RpcResponse deserialize = jdkSerialize.deserialize(result, RpcResponse.class);
         return (User) deserialize.getData();
     }
+
+    @Override
+    public int queryUsername(User user) {
+        return user.getName().length();
+    }
 }
