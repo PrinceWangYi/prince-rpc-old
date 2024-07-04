@@ -1,6 +1,7 @@
 package com.prince.spi;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.prince.registry.Registry;
 import com.prince.serialize.Serializer;
 import com.prince.serialize.SerializerKeys;
 import lombok.extern.slf4j.Slf4j;
@@ -50,49 +51,7 @@ public class SpiLoader {
     /**
      * 动态加载的类列表
      */
-    private static final List<Class<?>> LOAD_CLASS_LIST = Arrays.asList(Serializer.class);
-
-    /**
-     * 加载所有类型
-     */
-    public static void loadAll() {
-        log.info("加载所有 SPI");
-        for (Class<?> aClass : LOAD_CLASS_LIST) {
-            load(aClass);
-        }
-    }
-
-    /**
-     * 获取某个接口的实例
-     *
-     * @param tClass
-     * @param key
-     * @param <T>
-     * @return
-     */
-    public static <T> T getInstance(Class<?> tClass, String key) {
-        String tClassName = tClass.getName();
-        Map<String, Class<?>> keyClassMap = loaderMap.get(tClassName);
-        if (keyClassMap == null) {
-            throw new RuntimeException(String.format("SpiLoader 未加载 %s 类型", tClassName));
-        }
-        if (!keyClassMap.containsKey(key)) {
-            throw new RuntimeException(String.format("SpiLoader 的 %s 不存在 key=%s 的类型", tClassName, key));
-        }
-        // 获取到要加载的实现类型
-        Class<?> implClass = keyClassMap.get(key);
-        // 从实例缓存中加载指定类型的实例
-        String implClassName = implClass.getName();
-        if (!instanceCache.containsKey(implClassName)) {
-            try {
-                instanceCache.put(implClassName, implClass.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                String errorMsg = String.format("%s 类实例化失败", implClassName);
-                throw new RuntimeException(errorMsg, e);
-            }
-        }
-        return (T) instanceCache.get(implClassName);
-    }
+    private static final List<Class<?>> LOAD_CLASS_LIST = List.of(Serializer.class/*, Registry.class*/);
 
     /**
      * 加载某个类型
@@ -129,11 +88,53 @@ public class SpiLoader {
         return keyClassMap;
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    /**
+     * 获取某个接口的实例
+     *
+     * @param tClass
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public static <T> T getInstance(Class<?> tClass, String key) {
+        String tClassName = tClass.getName();
+        Map<String, Class<?>> keyClassMap = loaderMap.get(tClassName);
+        if (keyClassMap == null) {
+            throw new RuntimeException(String.format("SpiLoader 未加载 %s 类型", tClassName));
+        }
+        if (!keyClassMap.containsKey(key)) {
+            throw new RuntimeException(String.format("SpiLoader 的 %s 不存在 key=%s 的类型", tClassName, key));
+        }
+        // 获取到要加载的实现类型
+        Class<?> implClass = keyClassMap.get(key);
+        // 从实例缓存中加载指定类型的实例
+        String implClassName = implClass.getName();
+        if (!instanceCache.containsKey(implClassName)) {
+            try {
+                instanceCache.put(implClassName, implClass.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                String errorMsg = String.format("%s 类实例化失败", implClassName);
+                throw new RuntimeException(errorMsg, e);
+            }
+        }
+        return (T) instanceCache.get(implClassName);
+    }
+
+    /**
+     * 加载所有类型
+     */
+    public static void loadAll() {
+        log.info("加载所有 SPI");
+        for (Class<?> aClass : LOAD_CLASS_LIST) {
+            load(aClass);
+        }
+    }
+
+    /*public static void main(String[] args) throws IOException, ClassNotFoundException {
         loadAll();
         System.out.println(loaderMap);
         Serializer serializer = getInstance(Serializer.class, SerializerKeys.HESSIAN);
         System.out.println(serializer);
-    }
+    }*/
 
 }

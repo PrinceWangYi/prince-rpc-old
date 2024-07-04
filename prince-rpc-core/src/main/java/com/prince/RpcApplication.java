@@ -1,7 +1,10 @@
 package com.prince;
 
+import com.prince.config.RegistryConfig;
 import com.prince.config.RpcConfig;
 import com.prince.constant.RpcConstant;
+import com.prince.registry.Registry;
+import com.prince.registry.RegistryFactory;
 import com.prince.utils.ConfigUtils;
 
 public class RpcApplication {
@@ -10,6 +13,10 @@ public class RpcApplication {
 
     public static void init(RpcConfig config) {
         rpcConfig = config;
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry registry = RegistryFactory.getRegistry(registryConfig.getRegistry());
+        registry.init(registryConfig);
+        Runtime.getRuntime().addShutdownHook(new Thread(registry::destroy));
     }
 
     public static void init() {

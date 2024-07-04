@@ -13,7 +13,7 @@ public class Consumer {
         User user = new User();
         user.setName("prince");
         User user1 = proxy.getUser(user);
-        System.out.println(user1);
+        System.out.println(user1.getName());
     }
 
 }

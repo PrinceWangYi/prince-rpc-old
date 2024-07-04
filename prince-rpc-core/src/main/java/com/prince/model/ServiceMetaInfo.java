@@ -2,6 +2,7 @@ package com.prince.model;
 
 import cn.hutool.core.util.StrUtil;
 import com.prince.constant.RpcConstant;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Data;
  *
  */
 @Data
+@Builder
 public class ServiceMetaInfo {
 
     /**
@@ -34,12 +36,11 @@ public class ServiceMetaInfo {
     /**
      * 服务分组（暂未实现）
      */
-    private String serviceGroup = "default";
+    /*private String serviceGroup = "default";*/
 
     /**
      * 获取服务键名
-     *
-     * @return
+     * @return string
      */
     public String getServiceKey() {
         // 后续可扩展服务分组
@@ -49,8 +50,7 @@ public class ServiceMetaInfo {
 
     /**
      * 获取服务注册节点键名
-     *
-     * @return
+     * @return string
      */
     public String getServiceNodeKey() {
         return String.format("%s/%s:%s", getServiceKey(), serviceHost, servicePort);
@@ -58,8 +58,7 @@ public class ServiceMetaInfo {
 
     /**
      * 获取完整服务地址
-     *
-     * @return
+     * @return string
      */
     public String getServiceAddress() {
         if (!StrUtil.contains(serviceHost, "http")) {
