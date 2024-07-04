@@ -1,5 +1,6 @@
 package com.prince.config;
 
+import com.prince.serialize.SerializerKeys;
 import lombok.Data;
 
 @Data
@@ -14,4 +15,6 @@ public class RpcConfig {
     private Integer port = 8080;
 
     private boolean mock = false;
+
+    private String serializer = SerializerKeys.JDK;
 }

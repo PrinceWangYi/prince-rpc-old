@@ -1,23 +1,20 @@
 package com.prince;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.json.JSONUtil;
 import com.prince.model.RpcRequest;
 import com.prince.model.RpcResponse;
 import com.prince.model.User;
-import com.prince.serialize.JDKSerialize;
+import com.prince.serialize.JdkSerializer;
 import com.prince.service.UserService;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class UserServiceProxy implements UserService {
 
     @Override
     public User getUser(User user) throws IOException {
-        JDKSerialize jdkSerialize = new JDKSerialize();
+        JdkSerializer jdkSerialize = new JdkSerializer();
         RpcRequest rpcRequest = RpcRequest.builder()
                 .serviceName(UserService.class.getName())
                 .methodName("getUser")

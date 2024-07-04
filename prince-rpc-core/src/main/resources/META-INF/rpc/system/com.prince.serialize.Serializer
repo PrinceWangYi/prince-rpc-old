@@ -1,0 +1,4 @@
+jdk=com.prince.serialize.JdkSerializer
+hessian=com.prince.serialize.HessianSerializer
+json=com.prince.serialize.JsonSerializer
+kryo=com.prince.serialize.KryoSerializer

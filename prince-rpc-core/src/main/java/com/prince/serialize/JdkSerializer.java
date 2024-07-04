@@ -2,7 +2,7 @@ package com.prince.serialize;
 
 import java.io.*;
 
-public class JDKSerialize implements Serializer{
+public class JdkSerializer implements Serializer{
 
     /**
      * 序列化

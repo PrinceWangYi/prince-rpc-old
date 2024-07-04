@@ -7,7 +7,7 @@ import java.lang.reflect.Proxy;
 public class ServiceProxyFactory {
 
     public static <T> T getProxy(Class<T> serviceClass) {
-        if (RpcApplication.getDefaultConfig().isMock()) {
+        if (RpcApplication.getRpcConfig().isMock()) {
             return getMockProxy(serviceClass);
         }
 

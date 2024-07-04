@@ -5,7 +5,8 @@ import cn.hutool.http.HttpResponse;
 import com.prince.RpcApplication;
 import com.prince.model.RpcRequest;
 import com.prince.model.RpcResponse;
-import com.prince.serialize.JDKSerialize;
+import com.prince.serialize.Serializer;
+import com.prince.serialize.SerializerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -14,7 +15,7 @@ public class ServiceProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        JDKSerialize jdkSerialize = new JDKSerialize();
+        Serializer serializer = SerializerFactory.getSerializer(RpcApplication.getRpcConfig().getSerializer());
         RpcRequest rpcRequest = RpcRequest.builder()
                 .serviceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
@@ -22,11 +23,11 @@ public class ServiceProxy implements InvocationHandler {
                 .args(args)
                 .build();
 
-        HttpRequest post = HttpRequest.post("http://localhost:" + RpcApplication.getDefaultConfig().getPort());
-        HttpResponse response = post.body(jdkSerialize.serialize(rpcRequest)).execute();
+        HttpRequest post = HttpRequest.post("http://localhost:" + RpcApplication.getRpcConfig().getPort());
+        HttpResponse response = post.body(serializer.serialize(rpcRequest)).execute();
 
         byte[] result = response.bodyBytes();
-        RpcResponse deserialize = jdkSerialize.deserialize(result, RpcResponse.class);
+        RpcResponse deserialize = serializer.deserialize(result, RpcResponse.class);
         return deserialize.getData();
     }
 }

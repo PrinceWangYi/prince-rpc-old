@@ -4,7 +4,6 @@ import com.prince.RpcApplication;
 import com.prince.registry.LocalRegistry;
 import com.prince.server.VertxHttpServer;
 import com.prince.service.UserService;
-import io.vertx.core.Vertx;
 
 public class Provider {
 
@@ -12,8 +11,9 @@ public class Provider {
         RpcApplication.init();
 
         LocalRegistry.register(UserService.class.getName(), UserServiceImpl.class);
+
         VertxHttpServer server = new VertxHttpServer();
-        server.doStart(RpcApplication.getDefaultConfig().getPort());
+        server.doStart(RpcApplication.getRpcConfig().getPort());
     }
 
 }

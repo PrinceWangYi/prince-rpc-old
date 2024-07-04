@@ -6,10 +6,10 @@ import com.prince.utils.ConfigUtils;
 
 public class RpcApplication {
 
-    private static volatile RpcConfig defaultConfig;
+    private static volatile RpcConfig rpcConfig;
 
     public static void init(RpcConfig config) {
-        defaultConfig = config;
+        rpcConfig = config;
     }
 
     public static void init() {
@@ -23,14 +23,14 @@ public class RpcApplication {
         init(newRpcConfig);
     }
 
-    public static RpcConfig getDefaultConfig() {
-        if (defaultConfig == null) {
+    public static RpcConfig getRpcConfig() {
+        if (rpcConfig == null) {
             synchronized (RpcApplication.class) {
-                if (defaultConfig == null) {
+                if (rpcConfig == null) {
                     init();
                 }
             }
         }
-        return defaultConfig;
+        return rpcConfig;
     }
 }
