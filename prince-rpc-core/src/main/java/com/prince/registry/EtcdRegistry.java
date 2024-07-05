@@ -1,19 +1,16 @@
 package com.prince.registry;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
 import com.prince.config.RegistryConfig;
 import com.prince.model.ServiceMetaInfo;
-import io.etcd.jetcd.ByteSequence;
-import io.etcd.jetcd.Client;
-import io.etcd.jetcd.KV;
-import io.etcd.jetcd.KeyValue;
-import io.etcd.jetcd.kv.GetResponse;
-import io.etcd.jetcd.kv.PutResponse;
+import io.etcd.jetcd.*;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.watch.WatchEvent;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -27,14 +24,25 @@ public class EtcdRegistry implements Registry{
 
     private KV kvClient;
 
+    /**
+     * 已注册服务，键的缓存
+     */
     private final Set<String> localCache = new HashSet<>();
 
-    private final RegistryCache cache = new RegistryCache();
+    /**
+     * 发现服务缓存
+     */
+    private final RegistryCache serviceCache = new RegistryCache();
 
     /**
      * 根节点
      */
     private static final String ETCD_ROOT_PATH = "/rpc/";
+
+    /**
+     *
+     */
+    private final Set<String> watchKeySet = new ConcurrentHashSet<>();
 
     @Override
     public void init(RegistryConfig registryConfig) {
@@ -68,7 +76,7 @@ public class EtcdRegistry implements Registry{
 
     @Override
     public List<ServiceMetaInfo> serviceDiscovery(String serviceKey) {
-        List<ServiceMetaInfo> cacheList = cache.readCache();
+        List<ServiceMetaInfo> cacheList = serviceCache.readCache();
         if (cacheList != null) {
             return cacheList;
         }
@@ -79,9 +87,12 @@ public class EtcdRegistry implements Registry{
 
             List<KeyValue> kvs = kvClient.get(getByteSequence(searchPrefix), option).get().getKvs();
             List<ServiceMetaInfo> serviceMetaInfoList = kvs.stream()
-                    .map(kv -> JSONUtil.toBean(kv.getValue().toString(), ServiceMetaInfo.class))
+                    .map(kv -> {
+                        watch(kv.getKey().toString());
+                        return JSONUtil.toBean(kv.getValue().toString(), ServiceMetaInfo.class);
+                    })
                     .collect(Collectors.toList());
-            cache.writeCache(serviceMetaInfoList);
+            serviceCache.writeCache(serviceMetaInfoList);
             return serviceMetaInfoList;
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -118,7 +129,22 @@ public class EtcdRegistry implements Registry{
 
     @Override
     public void watch(String serviceNodeKey) {
-
+        Watch watchClient = client.getWatchClient();
+        if (watchKeySet.add(serviceNodeKey)) {
+            watchClient.watch(getByteSequence(ETCD_ROOT_PATH + serviceNodeKey), response -> {
+                for (WatchEvent event : response.getEvents()) {
+                    switch (event.getEventType()) {
+                        case DELETE:
+                            serviceCache.clearCache();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+                serviceCache.clearCache();
+            });
+        }
     }
 
     @Override
