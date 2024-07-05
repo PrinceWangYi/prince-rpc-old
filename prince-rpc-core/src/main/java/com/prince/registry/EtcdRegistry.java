@@ -29,6 +29,8 @@ public class EtcdRegistry implements Registry{
 
     private final Set<String> localCache = new HashSet<>();
 
+    private final RegistryCache cache = new RegistryCache();
+
     /**
      * 根节点
      */
@@ -66,14 +68,21 @@ public class EtcdRegistry implements Registry{
 
     @Override
     public List<ServiceMetaInfo> serviceDiscovery(String serviceKey) {
+        List<ServiceMetaInfo> cacheList = cache.readCache();
+        if (cacheList != null) {
+            return cacheList;
+        }
         // 前缀搜索，末尾要加“/”
         String searchPrefix = ETCD_ROOT_PATH + serviceKey + "/";
         try {
             GetOption option = GetOption.builder().isPrefix(true).build();
 
             List<KeyValue> kvs = kvClient.get(getByteSequence(searchPrefix), option).get().getKvs();
-            return kvs.stream().map(kv -> JSONUtil.toBean(kv.getValue().toString(), ServiceMetaInfo.class))
+            List<ServiceMetaInfo> serviceMetaInfoList = kvs.stream()
+                    .map(kv -> JSONUtil.toBean(kv.getValue().toString(), ServiceMetaInfo.class))
                     .collect(Collectors.toList());
+            cache.writeCache(serviceMetaInfoList);
+            return serviceMetaInfoList;
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -115,6 +124,15 @@ public class EtcdRegistry implements Registry{
     @Override
     public void destroy() {
         System.out.println("服务器节点下线");
+
+        for (String key : localCache) {
+            try {
+                kvClient.delete(getByteSequence(key)).get();
+            } catch (Exception e) {
+                throw new RuntimeException(key + "节点下线失败", e);
+            }
+        }
+
         if (client != null) {
             client.close();
         }
