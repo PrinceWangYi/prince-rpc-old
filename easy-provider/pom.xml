@@ -10,7 +10,7 @@
     <dependencies>
         <dependency>
             <groupId>com.prince</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>prince-rpc-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
