@@ -15,6 +15,8 @@ import com.prince.registry.RegistryFactory;
 import com.prince.registry.RegistryKeys;
 import com.prince.serialize.Serializer;
 import com.prince.serialize.SerializerFactory;
+import com.prince.server.tcp.VertxTcpServer;
+import com.prince.server.tcp.VertxTpcClient;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,7 +26,7 @@ public class ServiceProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Serializer serializer = SerializerFactory.getSerializer(RpcApplication.getRpcConfig().getSerializer());
+//        Serializer serializer = SerializerFactory.getSerializer(RpcApplication.getRpcConfig().getSerializer());
         String serviceName = method.getDeclaringClass().getName();
         RpcRequest rpcRequest = RpcRequest.builder()
                 .serviceName(serviceName)
@@ -44,14 +46,10 @@ public class ServiceProxy implements InvocationHandler {
             throw new RuntimeException("暂无服务地址");
         }
 
+        // 选择服务
         ServiceMetaInfo metaInfo = serviceMetaInfos.get(0);
 
-        /*HttpRequest post = HttpRequest.post("http://localhost:" + RpcApplication.getRpcConfig().getPort());*/
-        HttpRequest post = HttpRequest.post(metaInfo.getServiceAddress());
-        HttpResponse response = post.body(serializer.serialize(rpcRequest)).execute();
-
-        byte[] result = response.bodyBytes();
-        RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
-        return rpcResponse.getData();
+        RpcResponse response = VertxTpcClient.doRequest(rpcRequest, metaInfo);
+        return response.getData();
     }
 }

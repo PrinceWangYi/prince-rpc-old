@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum ProtocolMessageSerializerEnum {
-    JDK(0, "JDK"),
-    JSON(1, "JSON"),
-    KRYO(2, "KRYO"),
-    HESSIAN(3, "HESSIAN");
+    JDK(0, "jdk"),
+    JSON(1, "json"),
+    KRYO(2, "kryo"),
+    HESSIAN(3, "hessian");
 
     private final int key;
 
@@ -19,14 +19,22 @@ public enum ProtocolMessageSerializerEnum {
         this.serializer = serializer;
     }
 
-    public static ProtocolMessageSerializerEnum getSerializerByKey(int key) {
+    public int getKey() {
+        return key;
+    }
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public static ProtocolMessageSerializerEnum getEnumByKey(int key) {
         for (ProtocolMessageSerializerEnum serializerEnum : ProtocolMessageSerializerEnum.values()) {
             if (serializerEnum.key == key) return serializerEnum;
         }
         return null;
     }
 
-    public static ProtocolMessageSerializerEnum getKeyBySerializer(String serializer) {
+    public static ProtocolMessageSerializerEnum getEnumBySerializer(String serializer) {
         for (ProtocolMessageSerializerEnum serializerEnum : ProtocolMessageSerializerEnum.values()) {
             if (serializerEnum.serializer.equals(serializer)) return serializerEnum;
         }

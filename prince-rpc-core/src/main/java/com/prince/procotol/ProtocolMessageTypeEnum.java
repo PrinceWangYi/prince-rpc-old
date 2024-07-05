@@ -12,7 +12,11 @@ public enum ProtocolMessageTypeEnum {
         this.key = key;
     }
 
-    public static ProtocolMessageTypeEnum getProtocolEnumByCode(int key) {
+    public int getKey() {
+        return key;
+    }
+
+    public static ProtocolMessageTypeEnum getProtocolEnumByKey(int key) {
         for (ProtocolMessageTypeEnum protocolEnum : ProtocolMessageTypeEnum.values()) {
             if (protocolEnum.key == key) {
                 return protocolEnum;

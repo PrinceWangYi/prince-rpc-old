@@ -16,6 +16,14 @@ public enum ProtocolMessageStatueEnum {
         this.code = code;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
     public static ProtocolMessageStatueEnum getProtocolEnumByCode(int code) {
         for (ProtocolMessageStatueEnum protocolEnum : ProtocolMessageStatueEnum.values()) {
             if (protocolEnum.code == code) {
