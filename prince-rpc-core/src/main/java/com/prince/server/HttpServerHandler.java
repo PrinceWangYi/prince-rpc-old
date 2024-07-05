@@ -23,10 +23,10 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
     public void handle(HttpServerRequest request) {
         Serializer serialize = SerializerFactory.getSerializer(RpcApplication.getRpcConfig().getSerializer());
         request.bodyHandler(body -> {
-            byte[] bytes = body.getBytes();
+            byte[] requestData = body.getBytes();
             RpcRequest rpcRequest = null;
             try {
-                rpcRequest = serialize.deserialize(bytes, RpcRequest.class);
+                rpcRequest = serialize.deserialize(requestData, RpcRequest.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }

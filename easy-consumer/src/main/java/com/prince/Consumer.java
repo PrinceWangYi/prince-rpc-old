@@ -3,7 +3,6 @@ package com.prince;
 import com.prince.model.User;
 import com.prince.proxy.ServiceProxyFactory;
 import com.prince.service.UserService;
-
 import java.io.IOException;
 
 public class Consumer {
